@@ -1,0 +1,63 @@
+{% load static %}
+
+<comment class="card p-4 !mb-4">
+    <div class="flex justify-between items-center">
+        {% if comment.author %}
+        <a class="flex items-center gap-1 mb-2" href="{% url 'author-profile' comment.author.username %}">
+            <img class="w-8 h-8 object-cover rounded-full" src="{{ comment.author.profile.avatar }}">
+            <span class="font-bold hover:underline">{{ comment.author.profile.name }}</span>
+            <span class="text-sm font-normal text-gray-400">@{{ comment.author.username }}</span>
+        </a>
+        {% else %}
+        <div class="flex items-center gap-1 mb-4">
+            <img class="w-8 h-8 object-cover rounded-full" src="{% static 'images/avatar_default.svg' %}">
+            <span class="font-bold hover:underline">No author</span>
+        </div>
+        {% endif %}
+    </div>
+    <p class="text-xl px-2">
+        {{ comment.body }}
+    </p>
+    <div x-data="{ repliesOpen: false }" class="flex items-center justify-between flex-wrap text-sm px-2">
+        <a @click="repliesOpen = !repliesOpen" class="font-bold hover:underline cursor-pointer">
+            <div class="inline-block" x-bind:class="repliesOpen && 'rotate-90 duration-300'">
+                <svg transform ="rotate(90)" width="9" height="9" viewBox="0 0 25 25">
+                    <path d="M24 22h-24l12-20z"/>
+                </svg>
+            </div>
+            Replies
+            <span class="font-light text-gray-500 ml-1">{{ comment.replies.count }}</span>
+        </a>
+        <div class="flex items-center gap-4 [&>a:hover]:underline">
+            <div class="flex items-center gap-1">
+                {% if request.user in comment.likes.all %}
+                    <img class="w-5 -mt-1" src="{% static 'images/fireheart_red.svg' %}">
+                {% else %}
+                    <img class="w-5 -mt-1" src="{% static 'images/fireheart.svg' %}">
+                {% endif %}
+                {{ comment.likes.count }}
+            </div>
+                {% if request.user in comment.likes.all %}
+                    <a href="{% url 'like-comment' comment.id %}"><b>Liked</b></a>
+                {% else %}
+                    <a href="{% url 'like-comment' comment.id %}">Like</a>
+                {% endif %}
+            {% if user.is_authenticated and comment.author == user %}
+                <a href="{% url 'comment-delete' comment.id %}">Delete</a>
+            {% endif %}
+        </div>
+
+        <div x-show="repliesOpen" x-cloak class="basis-full mt-3 pl-8 grid grid-cols-1">
+            {% for reply in comment.replies.all %}
+                {% include 'a_posts/reply_comment.html' %}
+            {% endfor %}
+
+            <form method="POST" action="{% url 'send-reply' comment.id %}" class="replyform flex justify-between" autocomplete="off">
+                {% csrf_token %}
+<!--                {{ reply_form }}-->
+                <input type="text" name="body" placeholder="Add reply ..." maxlength="150">
+                <button class="block" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</comment>

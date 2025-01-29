@@ -1,0 +1,31 @@
+{% extends 'layouts/detail.html' %}
+
+{% load static %}
+
+{% block content %}
+{% include 'a_posts/post.html' %}
+
+<div class="card !pb-0 -mt-3">
+    <form method="POST" action="{% url 'send-comment' post.id %}" class="flex items-center p-4" autocomplete="off">
+        {% csrf_token %}
+<!--        {{ comment_form.as_p }}-->
+        <input type="text" name="body" placeholder="Add comment ..." maxlength="150">
+        <button @click="open = false" class="block ml-2" type="submit">Submit</button>
+    </form>
+</div>
+
+<div class="mb-20">
+    {% if post.comments.count %}
+    <div id="tabs" class="ml-4 flex gap-1 mb-4">
+        <a class="tab selected">Newest First</a>
+        <a class="tab">Top Comments</a>
+    </div>
+    {% endif %}
+
+    <div id="tab-contents">
+        {% for comment in post.comments.all %}
+            {% include 'a_posts/comment.html' %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

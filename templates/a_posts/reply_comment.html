@@ -1,0 +1,42 @@
+{% load static %}
+
+<reply class="flex items-end justify-between py-4 border-t">
+    <div class="flex">
+        {% if reply.author %}
+            <a href="{% url 'author-profile' reply.author.username %}">
+                <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ reply.author.profile.avatar }}">
+            </a>
+        {% else %}
+            <img class="w-8 h-8 object-cover rounded-full mr-2" src="{% static 'images/avatar_default.svg' %}">
+        {% endif %}
+        <div class="w-fit">
+            {% if reply.author %}
+                <a class="block" href="{% url 'author-profile' reply.author.username %}">
+                    <span class="font-bold hover:underline">{{ reply.author.profile.name }}</span>
+                    <span class="text-sm text-gray-400">@{{ reply.author.username }}</span>
+                </a>
+            {% else %}
+                <span class="text-gray-500">No author</span>
+            {% endif %}
+            <div class="mr-3">{{ reply.body }}</div>
+        </div>
+    </div>
+    <div class="flex items-center gap-4 [&>a:hover]:underline">
+        <div class="flex items-center gap-1">
+            {% if request.user in reply.likes.all %}
+                <img class="w-5 -mt-1" src="{% static 'images/fireheart_red.svg' %}">
+            {% else %}
+                <img class="w-5 -mt-1" src="{% static 'images/fireheart.svg' %}">
+            {% endif %}
+            {{ reply.likes.count }}
+        </div>
+        {% if request.user in reply.likes.all %}
+            <a href="{% url 'like-reply' reply.id %}"><b>Liked</b></a>
+        {% else %}
+            <a href="{% url 'like-reply' reply.id %}">Like</a>
+        {% endif %}
+        {% if user.is_authenticated and reply.author == user %}
+            <a href="{% url 'reply-delete' reply.id %}">Delete</a>
+        {% endif %}
+    </div>
+</reply>
