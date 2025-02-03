@@ -7,8 +7,7 @@ Bu loyiha Python 3.10 yordamida ishlab chiqilgan va Django v5.0 bilan ishlaydi.
 Loyihani ishga tushirishdan oldin quyidagi dasturlar o'rnatilganligiga ishonch hosil qiling:
 
 - Python 3.10
-- pip (Python paketi menejeri)
-- virtualenv (ixtiyoriy, ammo tavsiya etiladi)
+- Docker va docker-compose
 
 ## O'rnatish va Ishga Tushirish
 
