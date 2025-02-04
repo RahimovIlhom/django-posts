@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import PostCreateForm, PostEditForm, CommentCreateForm, ReplyCreateForm
@@ -117,16 +117,29 @@ def post_detail_view(request, post_id):
     return render(request, 'a_posts/post_detail.html', context)
 
 
+def toggle_like(model):
+    def inner_func(func):
+        def wrapper(request, *args, **kwargs):
+            obj = get_object_or_404(model, id=kwargs.get('pk'))
+
+            if request.user in obj.likes.all():
+                obj.likes.remove(request.user)
+            else:
+                obj.likes.add(request.user)
+
+            return func(request, obj)
+        return wrapper
+    return inner_func
+
+
+
 @login_required
-def post_like_view(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-    else:
-        post.likes.add(request.user)
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+@toggle_like(Post)
+def post_like_view(request, post):
+    context = {
+        'post': post
+    }
+    return render(request, 'snippets/post_likes.html', context)
 
 
 @login_required
@@ -144,15 +157,13 @@ def send_comment(request, pk):
 
 
 @login_required
-def comment_like_view(request, comment_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
+@toggle_like(Comment)
+def comment_like_view(request, comment):
+    context = {
+        'comment': comment
+    }
 
-    if request.user in comment.likes.all():
-        comment.likes.remove(request.user)
-    else:
-        comment.likes.add(request.user)
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return render(request, 'snippets/comment_likes.html', context)
 
 
 @login_required
@@ -171,15 +182,13 @@ def send_reply(request, pk):
 
 
 @login_required
-def reply_like_view(request, reply_id):
-    reply = get_object_or_404(Reply, pk=reply_id)
+@toggle_like(Reply)
+def reply_like_view(request, reply):
+    context = {
+        'reply': reply
+    }
 
-    if request.user in reply.likes.all():
-        reply.likes.remove(request.user)
-    else:
-        reply.likes.add(request.user)
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return render(request, 'snippets/reply_likes.html', context)
 
 
 @login_required

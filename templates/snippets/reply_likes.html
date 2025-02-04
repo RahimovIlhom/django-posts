@@ -1,0 +1,22 @@
+{% load static %}
+
+<div>
+    {% if user.is_authenticated %}
+        <a class="flex items-center gap-1 cursor-pointer"
+        hx-get="{% url 'like-reply' reply.id %}"
+        hx-target="closest div"
+        hx-swap="outerHTML">
+            {% if request.user in reply.likes.all %}
+                <img class="w-4 -mt-1" src="{% static 'images/fireheart_red.svg' %}">
+            {% else %}
+                <img class="w-4 -mt-1" src="{% static 'images/fireheart.svg' %}">
+            {% endif %}
+            {{ reply.likes.count }}
+        </a>
+    {% else %}
+        <div class="flex items-center gap-1">
+            <img class="w-4 -mt-1" src="{% static 'images/fireheart.svg' %}">
+            {{ reply.likes.count }}
+        </div>
+    {% endif %}
+</div>

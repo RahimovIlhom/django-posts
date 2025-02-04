@@ -29,19 +29,9 @@
             <span class="font-light text-gray-500 ml-1">{{ comment.replies.count }}</span>
         </a>
         <div class="flex items-center gap-4 [&>a:hover]:underline">
-            <div class="flex items-center gap-1">
-                {% if request.user in comment.likes.all %}
-                    <img class="w-5 -mt-1" src="{% static 'images/fireheart_red.svg' %}">
-                {% else %}
-                    <img class="w-5 -mt-1" src="{% static 'images/fireheart.svg' %}">
-                {% endif %}
-                {{ comment.likes.count }}
-            </div>
-                {% if request.user in comment.likes.all %}
-                    <a href="{% url 'like-comment' comment.id %}"><b>Liked</b></a>
-                {% else %}
-                    <a href="{% url 'like-comment' comment.id %}">Like</a>
-                {% endif %}
+
+            {% include 'snippets/comment_likes.html' %}
+
             {% if user.is_authenticated and comment.author == user %}
                 <a href="{% url 'comment-delete' comment.id %}">Delete</a>
             {% endif %}

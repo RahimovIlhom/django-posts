@@ -1,4 +1,4 @@
-# Django Loyihasi - README
+# Django WebApp Loyihasi
 
 Bu loyiha Python 3.10 yordamida ishlab chiqilgan va Django v5.0 bilan ishlaydi.
 
