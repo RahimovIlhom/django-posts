@@ -1,0 +1,6 @@
+{% include 'a_posts/comment.html' %}
+
+
+<span hx-swap-oob="true" id="comments-count-{{ post.id }}" class="font-light text-gray-500 ml-1">
+    {{ post.comments.count }}
+</span>

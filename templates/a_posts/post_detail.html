@@ -5,14 +5,19 @@
 {% block content %}
 {% include 'a_posts/post.html' %}
 
-<div class="card !pb-0 -mt-3">
-    <form method="POST" action="{% url 'send-comment' post.id %}" class="flex items-center p-4" autocomplete="off">
-        {% csrf_token %}
-<!--        {{ comment_form.as_p }}-->
-        <input type="text" name="body" placeholder="Add comment ..." maxlength="150">
-        <button @click="open = false" class="block ml-2" type="submit">Submit</button>
-    </form>
-</div>
+{% if user.is_authenticated %}
+    <div class="card !pb-0 -mt-3">
+        <form class="flex items-center p-4" autocomplete="off"
+              hx-post="{% url 'send-comment' post.id %}"
+              hx-target="#tab-contents"
+              hx-swap="afterbegin"
+              _="on htmx:afterRequest reset() me">
+            {% csrf_token %}
+            <input type="text" name="body" placeholder="Add comment ..." maxlength="150">
+            <button @click="open = false" class="block ml-2" type="submit">Submit</button>
+        </form>
+    </div>
+{% endif %}
 
 <div class="mb-20">
     {% if post.comments.count %}

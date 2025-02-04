@@ -145,6 +145,9 @@ def post_like_view(request, post):
 @login_required
 def send_comment(request, pk):
     post = get_object_or_404(Post, id=pk)
+    context = {
+        'post': post
+    }
     if request.method == 'POST':
         form = CommentCreateForm(request.POST)
         if form.is_valid():
@@ -153,7 +156,8 @@ def send_comment(request, pk):
             comment.parent_post = post
             comment.save()
 
-    return redirect('post-detail', post.id)
+            context.update({'comment': comment})
+    return render(request, 'snippets/add_comment.html', context)
 
 
 @login_required
@@ -178,7 +182,11 @@ def send_reply(request, pk):
             reply.parent_comment = comment
             reply.save()
 
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    context = {
+        'comment': comment,
+        'reply': reply
+    }
+    return render(request, 'snippets/add_reply.html', context)
 
 
 @login_required
