@@ -21,16 +21,26 @@
 
 <div class="mb-20">
     {% if post.comments.count %}
-    <div id="tabs" class="ml-4 flex gap-1 mb-4">
-        <a class="tab selected">Newest First</a>
-        <a class="tab">Top Comments</a>
+    <div id="tabs" class="ml-4 flex gap-1 mb-4"
+     hx-target="#tab-contents"
+     hx-swap="innerHTML"
+     _="on htmx:afterOnLoad remove .selected from .tab then add .selected to event.target">
+        <a hx-get="{% url 'post-detail' post.id %}"
+           class="tab selected px-4 py-2 rounded hover:bg-gray-100">
+            Newest First
+        </a>
+        <a hx-get="{% url 'post-detail' post.id %}?top=comments"
+           class="tab px-4 py-2 rounded hover:bg-gray-100">
+            Top Comments
+        </a>
     </div>
-    {% endif %}
 
     <div id="tab-contents">
-        {% for comment in post.comments.all %}
+        {% for comment in comments %}
             {% include 'a_posts/comment.html' %}
         {% endfor %}
     </div>
+    {% endif %}
+
 </div>
 {% endblock content %}

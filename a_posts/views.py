@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.db.models import Count
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import PostCreateForm, PostEditForm, CommentCreateForm, ReplyCreateForm
@@ -106,12 +107,19 @@ def post_detail_view(request, post_id):
     comment_form = CommentCreateForm()
     reply_form = ReplyCreateForm()
     categories = Tag.objects.all()
+    comments = post.comments.all()
+
+    if request.htmx:
+        if request.GET.get('top') == 'comments':
+            comments = post.comments.annotate(num_likes=Count('likes')).filter(num_likes__gt=0).order_by('-num_likes')
+        return render(request, 'snippets/loop_postdetail_comments.html', {'comments': comments})
 
     context = {
         'post': post,
         'comment_form': comment_form,
         'reply_form': reply_form,
-        'categories': categories
+        'categories': categories,
+        'comments': comments
     }
 
     return render(request, 'a_posts/post_detail.html', context)
