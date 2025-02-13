@@ -19,7 +19,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '0.0.0.0', '127.
 
 # SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://*.ngrok-free.app'])
 
 # Application definition
 
